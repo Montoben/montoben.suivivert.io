@@ -1,0 +1,1102 @@
+<html><head><base href="/">
+<meta charset="UTF-8">
+<title>Suivi de l'entretien communal</title>
+<style>
+:root {
+  --primary: #2c3e50;
+  --secondary: #34495e;
+  --accent: #3498db;
+  --light: #ecf0f1;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--light);
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--secondary);
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: var(--accent);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.year-selector {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.year-selector select {
+  max-width: 200px;
+  margin: 0 auto;
+  font-size: 1.1em;
+}
+
+.period-selector {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.period-selector select {
+  max-width: 200px;
+  font-size: 1.1em;
+}
+
+.export-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.export-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.export-period {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-range {
+  display: flex;
+  gap: 20px;
+}
+
+.export-btn {
+  background-color: #27ae60;
+  align-self: flex-start;
+}
+
+#customExportPeriod {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+#activitiesList {
+  margin-top: 20px;
+  border-top: 2px solid var(--light);
+  padding-top: 20px;
+}
+
+.activity-card {
+  background: var(--light);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.activity-actions {
+  float: right;
+}
+
+.edit-btn, .delete-btn {
+  padding: 5px 10px;
+  margin-left: 5px;
+  font-size: 0.9em;
+}
+
+.edit-btn {
+  background-color: #f39c12;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+}
+
+.stats {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--primary);
+  color: white;
+  border-radius: 4px;
+}
+
+.stats-by-year {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stats-card {
+  flex: 1;
+  min-width: 250px;
+  background: var(--primary);
+  color: white;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.additional-fields {
+  display: none;
+  margin-top: 10px;
+}
+
+select:focus + .additional-fields,
+.additional-fields:focus-within {
+  display: block;
+}
+
+.time-group {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.time-input {
+  flex: 1;
+}
+
+input[type="number"] {
+  width: 100%;
+}
+
+.chart-container {
+  margin-top: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-title {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+
+.pie-chart {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.export-options {
+  margin: 10px 0;
+}
+
+.export-options label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.export-options input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+#scheduledActivities {
+  margin-top: 20px;
+}
+
+.scheduled-card {
+  background: var(--light);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border-left: 4px solid var(--accent);
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>Suivi de l'entretien communal</h1>
+  
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="activities">Activités</button>
+    <button class="tab-btn" data-tab="scheduled">Planification</button>
+  </div>
+
+  <div id="activitiesTab" class="tab-panel active">
+    <div class="period-selector">
+      <div>
+        <label for="monthSelect">Mois :</label>
+        <select id="monthSelect">
+          <option value="all">Tous les mois</option>
+          <option value="0">Janvier</option>
+          <option value="1">Février</option>
+          <option value="2">Mars</option>
+          <option value="3">Avril</option>
+          <option value="4">Mai</option>
+          <option value="5">Juin</option>
+          <option value="6">Juillet</option>
+          <option value="7">Août</option>
+          <option value="8">Septembre</option>
+          <option value="9">Octobre</option>
+          <option value="10">Novembre</option>
+          <option value="11">Décembre</option>
+        </select>
+      </div>
+      <div>
+        <label for="yearSelect">Année :</label>
+        <select id="yearSelect"></select>
+      </div>
+    </div>
+
+    <div class="export-section">
+      <h3>Exporter les données</h3>
+      <div class="export-controls">
+        <div class="export-period">
+          <label>Période d'export :</label>
+          <select id="exportPeriodSelect">
+            <option value="current">Mois en cours</option>
+            <option value="custom">Période personnalisée</option>
+          </select>
+        </div>
+        
+        <div id="customExportPeriod" style="display:none;">
+          <div class="date-range">
+            <div>
+              <label>Du :</label>
+              <input type="date" id="exportStartDate">
+            </div>
+            <div>
+              <label>Au :</label>
+              <input type="date" id="exportEndDate">
+            </div>
+          </div>
+        </div>
+        
+        <div class="export-options">
+          <label>
+            <input type="checkbox" id="includeDetails" checked>
+            Inclure le détail des activités
+          </label>
+          <label>
+            <input type="checkbox" id="includeChart" checked>
+            Inclure le diagramme de répartition
+          </label>
+        </div>
+        
+        <button id="exportPdfBtn" class="export-btn">
+          Exporter en PDF
+        </button>
+      </div>
+    </div>
+
+    <form id="activityForm">
+      <div class="form-group">
+        <label for="date">Date :</label>
+        <input type="date" id="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="activity">Type d'activité :</label>
+        <select id="activity" required>
+          <option value="">Sélectionnez une activité</option>
+          <option value="tonte">Tonte/Débroussaillage</option>
+          <option value="desherbage">Désherbage/Pulvérisation</option>
+          <option value="entretien">Entretien bâtiments/infrastructures</option>
+          <option value="deplacement">Déplacement/Transport</option>
+          <option value="travaux">Travaux</option>
+          <option value="autre">Autre(s)</option>
+        </select>
+      </div>
+
+      <div id="carburantField" class="additional-fields" style="display:none;">
+        <label for="carburant">Quantité de carburant personnel utilisé (L) :</label>
+        <input type="number" id="carburant" step="0.1" min="0">
+      </div>
+
+      <div id="kilometersField" class="additional-fields" style="display:none;">
+        <label for="kilometers">Nombre de kilomètres parcourus :</label>
+        <input type="number" id="kilometers" step="0.1" min="0">
+      </div>
+
+      <div class="form-group">
+        <label>Temps effectué :</label>
+        <div class="time-group">
+          <div class="time-input">
+            <label for="hours">Heures :</label>
+            <input type="number" id="hours" required min="0">
+          </div>
+          <div class="time-input">
+            <label for="minutes">Minutes :</label>
+            <input type="number" id="minutes" min="0" max="59">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description/Commentaire :</label>
+        <input type="text" id="description">
+      </div>
+
+      <button type="submit">Enregistrer l'activité</button>
+    </form>
+
+    <div class="stats-by-year">
+      <div class="stats-card">
+        <h3>Statistiques année sélectionnée</h3>
+        <p>Moyenne mensuelle: <span id="selectedMonthHours">0</span></p>
+        <p>Heures de l'année: <span id="selectedYearHours">0</span></p>
+      </div>
+      <div class="stats-card">
+        <h3>Statistiques année en cours</h3>
+        <p>Heures du mois en cours: <span id="currentMonth">0</span></p>
+        <p>Heures de l'année: <span id="currentYear">0</span></p>
+      </div>
+    </div>
+
+    <div id="activitiesList">
+      <h3>Activités enregistrées</h3>
+    </div>
+
+    <div class="chart-container">
+      <h3 class="chart-title">Répartition du temps par activité</h3>
+      <canvas id="activityChart"></canvas>
+    </div>
+  </div>
+
+  <div id="scheduledTab" class="tab-panel">
+    <form id="scheduleForm">
+      <div class="form-group">
+        <label for="scheduleActivity">Type d'activité :</label>
+        <select id="scheduleActivity" required>
+          <option value="">Sélectionnez une activité</option>
+          <option value="tonte">Tonte/Débroussaillage</option>
+          <option value="desherbage">Désherbage/Pulvérisation</option>
+          <option value="entretien">Entretien bâtiments/infrastructures</option>
+          <option value="deplacement">Déplacement/Transport</option>
+          <option value="travaux">Travaux</option>
+          <option value="autre">Autre(s)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="scheduleDescription">Description :</label>
+        <input type="text" id="scheduleDescription">
+      </div>
+
+      <button type="submit">Planifier l'activité</button>
+    </form>
+
+    <div id="scheduledActivities">
+      <h3>Activités planifiées</h3>
+    </div>
+  </div>
+</div>
+
+<script>
+let activities = JSON.parse(localStorage.getItem('activities') || '[]');
+let scheduledActivities = JSON.parse(localStorage.getItem('scheduledActivities') || '[]');
+const activityLabels = {
+  'tonte': 'Tonte/Débroussaillage',
+  'desherbage': 'Désherbage/Pulvérisation',
+  'entretien': 'Entretien bâtiments/infrastructures',
+  'deplacement': 'Déplacement/Transport',
+  'travaux': 'Travaux',
+  'autre': 'Autre(s)'
+};
+let selectedYear = new Date().getFullYear();
+let selectedMonth = 'all';
+
+function formatHoursAndMinutes(decimalHours) {
+  const hours = Math.floor(decimalHours);
+  const minutes = Math.round((decimalHours - hours) * 60);
+  return minutes > 0 ? `${hours}h${minutes}min` : `${hours}h`;
+}
+
+function initializeYearSelector() {
+  const yearSelect = document.getElementById('yearSelect');
+  const currentYear = new Date().getFullYear();
+  const years = [...new Set(activities.map(a => new Date(a.date).getFullYear()))];
+  
+  if (!years.includes(currentYear)) {
+    years.push(currentYear);
+  }
+  
+  years.sort((a, b) => b - a);
+  
+  yearSelect.innerHTML = years.map(year => 
+    `<option value="${year}"${year === selectedYear ? ' selected' : ''}>${year}</option>`
+  ).join('');
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    
+    this.classList.add('active');
+    document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+  });
+});
+
+document.getElementById('yearSelect').addEventListener('change', function(e) {
+  selectedYear = parseInt(e.target.value);
+  updateDisplay();
+});
+
+document.getElementById('monthSelect').addEventListener('change', function(e) {
+  selectedMonth = e.target.value;
+  updateDisplay();
+});
+
+document.getElementById('activity').addEventListener('change', function(e) {
+  const carburantField = document.getElementById('carburantField');
+  const kilometersField = document.getElementById('kilometersField');
+  
+  carburantField.style.display = e.target.value === 'tonte' ? 'block' : 'none';
+  kilometersField.style.display = e.target.value === 'deplacement' ? 'block' : 'none';
+});
+
+document.getElementById('activityForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const hours = parseInt(document.getElementById('hours').value) || 0;
+  const minutes = parseInt(document.getElementById('minutes').value) || 0;
+  const totalHours = hours + (minutes / 60);
+
+  const activity = {
+    date: document.getElementById('date').value,
+    type: document.getElementById('activity').value,
+    hours: totalHours,
+    description: document.getElementById('description').value,
+    carburant: document.getElementById('activity').value === 'tonte' ? 
+               parseFloat(document.getElementById('carburant').value) || 0 : 0,
+    kilometers: document.getElementById('activity').value === 'deplacement' ? 
+               parseFloat(document.getElementById('kilometers').value) || 0 : 0
+  };
+
+  const submitButton = document.querySelector('#activityForm button[type="submit"]');
+  const editIndex = submitButton.dataset.editIndex;
+
+  if(editIndex !== undefined) {
+    activities[editIndex] = activity;
+    submitButton.textContent = 'Enregistrer l\'activité';
+    delete submitButton.dataset.editIndex;
+  } else {
+    activities.push(activity);
+  }
+
+  localStorage.setItem('activities', JSON.stringify(activities));
+  updateDisplay();
+  this.reset();
+});
+
+function updateDisplay() {
+  const activitiesList = document.getElementById('activitiesList');
+  const currentDate = new Date();
+  let currentMonthHours = 0;
+  let currentYearHours = 0;
+  let selectedYearHours = 0;
+  let selectedYearMonthlyHours = {};
+
+  while(activitiesList.children.length > 1) {
+    activitiesList.removeChild(activitiesList.lastChild);
+  }
+
+  activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  activities.forEach(activity => {
+    const activityDate = new Date(activity.date);
+    const shouldDisplay = (selectedMonth === 'all' || activityDate.getMonth() === parseInt(selectedMonth)) 
+                         && activityDate.getFullYear() === selectedYear;
+    
+    if(activityDate.getFullYear() === currentDate.getFullYear()) {
+      currentYearHours += activity.hours;
+      if(activityDate.getMonth() === currentDate.getMonth()) {
+        currentMonthHours += activity.hours;
+      }
+    }
+
+    if(activityDate.getFullYear() === selectedYear) {
+      selectedYearHours += activity.hours;
+      const month = activityDate.getMonth();
+      selectedYearMonthlyHours[month] = (selectedYearMonthlyHours[month] || 0) + activity.hours;
+    }
+
+    if(shouldDisplay) {
+      const timeDisplay = formatHoursAndMinutes(activity.hours);
+
+      const card = document.createElement('div');
+      card.className = 'activity-card';
+      card.innerHTML = `
+        <div class="activity-actions">
+          <button class="edit-btn" data-index="${activities.indexOf(activity)}">Modifier</button>
+          <button class="delete-btn" data-index="${activities.indexOf(activity)}">Supprimer</button>
+        </div>
+        <strong>Date:</strong> ${activity.date}<br>
+        <strong>Activité:</strong> ${activityLabels[activity.type]}<br>
+        <strong>Temps:</strong> ${timeDisplay}<br>
+        ${activity.carburant ? `<strong>Carburant:</strong> ${activity.carburant}L<br>` : ''}
+        ${activity.kilometers ? `<strong>Kilomètres:</strong> ${activity.kilometers}km<br>` : ''}
+        ${activity.description ? `<strong>Description:</strong> ${activity.description}` : ''}
+      `;
+      activitiesList.appendChild(card);
+    }
+  });
+
+  const monthsWithActivity = Object.keys(selectedYearMonthlyHours).length;
+  const monthlyAverage = monthsWithActivity > 0 ? selectedYearHours / monthsWithActivity : 0;
+
+  document.getElementById('currentMonth').textContent = formatHoursAndMinutes(currentMonthHours);
+  document.getElementById('currentYear').textContent = formatHoursAndMinutes(currentYearHours);
+  document.getElementById('selectedMonthHours').textContent = formatHoursAndMinutes(monthlyAverage);
+  document.getElementById('selectedYearHours').textContent = formatHoursAndMinutes(selectedYearHours);
+
+  const activityStats = {
+    'tonte': 0,
+    'desherbage': 0,
+    'entretien': 0,
+    'deplacement': 0,
+    'travaux': 0,
+    'autre': 0
+  };
+
+  const colors = {
+    'tonte': '#2ecc71',
+    'desherbage': '#e74c3c',
+    'entretien': '#3498db',
+    'deplacement': '#f1c40f',
+    'travaux': '#9b59b6',
+    'autre': '#95a5a6'
+  };
+
+  activities.forEach(activity => {
+    const activityDate = new Date(activity.date);
+    if((selectedMonth === 'all' || activityDate.getMonth() === parseInt(selectedMonth)) 
+       && activityDate.getFullYear() === selectedYear) {
+      activityStats[activity.type] += activity.hours;
+    }
+  });
+
+  const totalHours = Object.values(activityStats).reduce((a, b) => a + b, 0);
+  
+  const chartData = {
+    labels: Object.keys(activityStats).map(key => {
+      const percentage = ((activityStats[key] / totalHours) * 100).toFixed(1);
+      const hours = formatHoursAndMinutes(activityStats[key]);
+      return `${activityLabels[key]} (${hours} - ${percentage}%)`;
+    }),
+    datasets: [{
+      data: Object.values(activityStats),
+      backgroundColor: Object.keys(activityStats).map(key => colors[key]),
+      borderWidth: 1
+    }]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          padding: 20,
+          font: {
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const value = context.raw;
+            if (value === 0) return '';
+            return `${formatHoursAndMinutes(value)}`;
+          }
+        }
+      }
+    },
+    plugins: [{
+      afterDraw: function(chart) {
+        const ctx = chart.ctx;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '12px Arial';
+        
+        const totalHours = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+        
+        chart.data.datasets[0].data.forEach((value, i) => {
+          if (value === 0) return;
+
+          const meta = chart.getDatasetMeta(0);
+          const arc = meta.data[i];
+
+          const angle = Math.PI / 2 - (arc.startAngle + (arc.endAngle - arc.startAngle) / 2);
+          const radius = (arc.innerRadius + arc.outerRadius) / 2;
+
+          const x = arc.x + Math.cos(angle) * radius * 0.6;
+          const y = arc.y - Math.sin(angle) * radius * 0.6;
+
+          ctx.fillStyle = 'white';
+          ctx.fillText(formatHoursAndMinutes(value), x, y);
+        });
+      }
+    }]
+  };
+
+  if (window.activityChart instanceof Chart) {
+    window.activityChart.destroy();
+  }
+
+  window.activityChart = new Chart(
+    document.getElementById('activityChart'),
+    {
+      type: 'pie',
+      data: chartData,
+      options: chartOptions
+    }
+  );
+}
+
+function deleteActivity(index) {
+  if(confirm('Êtes-vous sûr de vouloir supprimer cette activité ?')) {
+    activities.splice(index, 1);
+    localStorage.setItem('activities', JSON.stringify(activities));
+    updateDisplay();
+  }
+}
+
+function editActivity(index) {
+  const activity = activities[index];
+  
+  document.getElementById('date').value = activity.date;
+  document.getElementById('activity').value = activity.type;
+  document.getElementById('hours').value = Math.floor(activity.hours);
+  document.getElementById('minutes').value = Math.round((activity.hours - Math.floor(activity.hours)) * 60);
+  document.getElementById('description').value = activity.description;
+  
+  const carburantField = document.getElementById('carburantField');
+  const kilometersField = document.getElementById('kilometersField');
+  
+  carburantField.style.display = activity.type === 'tonte' ? 'block' : 'none';
+  kilometersField.style.display = activity.type === 'deplacement' ? 'block' : 'none';
+  
+  if(activity.type === 'tonte') {
+    document.getElementById('carburant').value = activity.carburant;
+  }
+  if(activity.type === 'deplacement') {
+    document.getElementById('kilometers').value = activity.kilometers;
+  }
+
+  const submitButton = document.querySelector('#activityForm button[type="submit"]');
+  submitButton.textContent = 'Modifier l\'activité';
+  submitButton.dataset.editIndex = index;
+}
+
+document.getElementById('activitiesList').addEventListener('click', function(e) {
+  if(e.target.classList.contains('delete-btn')) {
+    deleteActivity(parseInt(e.target.dataset.index));
+  } else if(e.target.classList.contains('edit-btn')) {
+    editActivity(parseInt(e.target.dataset.index));
+  }
+});
+
+document.getElementById('exportPeriodSelect').addEventListener('change', function(e) {
+  const customPeriod = document.getElementById('customExportPeriod');
+  customPeriod.style.display = e.target.value === 'custom' ? 'block' : 'none';
+});
+
+document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+
+function getWrappedLines(text, doc, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let currentLine = '';
+
+  words.forEach(word => {
+    const testLine = currentLine + (currentLine ? ' ' : '') + word;
+    if (doc.getTextWidth(testLine) > maxWidth) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  });
+  
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  
+  return lines;
+}
+
+async function addChartToPdf(doc, yPos) {
+  const canvas = document.getElementById('activityChart');
+  const imageData = canvas.toDataURL('image/png');
+  
+  if (yPos > 180) {
+    doc.addPage();
+    yPos = 20;
+  }
+  
+  doc.text('Diagramme de répartition des activités:', 15, yPos);
+  const imgWidth = 180;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  doc.addImage(imageData, 'PNG', (210 - imgWidth) / 2, yPos + 5, imgWidth, imgHeight);
+  
+  return yPos + imgHeight + 20;
+}
+
+function exportPdf() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  const includeDetails = document.getElementById('includeDetails').checked;
+  const includeChart = document.getElementById('includeChart').checked;
+  
+  let yPos = 45; 
+
+  const writeBoldUnderlined = (text, x, y) => {
+    doc.setFont(undefined, 'bold');
+    doc.text(text, x, y);
+    const textWidth = doc.getTextWidth(text);
+    doc.line(x, y + 1, x + textWidth, y + 1);
+  };
+
+  const writeWithBoldNumbers = (text, x, y) => {
+    const parts = text.split(/(\d+(?:\.\d+)?)/);
+    let currentX = x;
+    
+    parts.forEach(part => {
+      if (/^\d+(?:\.\d+)?$/.test(part)) {
+        doc.setFont(undefined, 'bold');
+      } else {
+        doc.setFont(undefined, 'normal');
+      }
+      doc.text(part, currentX, y);
+      currentX += doc.getTextWidth(part);
+    });
+    doc.setFont(undefined, 'normal');
+  };
+
+  const exportType = document.getElementById('exportPeriodSelect').value;
+  let startDate, endDate;
+  
+  if (exportType === 'current') {
+    const now = new Date();
+    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  } else {
+    startDate = new Date(document.getElementById('exportStartDate').value);
+    endDate = new Date(document.getElementById('exportEndDate').value);
+  }
+
+  const periodActivities = activities.filter(activity => {
+    const activityDate = new Date(activity.date);
+    return activityDate >= startDate && activityDate <= endDate;
+  });
+
+  doc.setFontSize(20);
+  doc.text('SUIVI DE L\'ENTRETIEN COMMUNAL', 15, 20);
+  
+  doc.setFontSize(12);
+  doc.text(`Période: ${formatDate(startDate)} au ${formatDate(endDate)}`, 15, 30);
+  
+  const stats = calculatePeriodStats(periodActivities);
+  
+  writeBoldUnderlined('Statistiques:', 15, yPos);
+  yPos += 15;
+  
+  writeWithBoldNumbers(`Heures totales: ${formatHoursAndMinutes(stats.totalHours)}`, 20, yPos);
+  yPos += 7;
+  writeWithBoldNumbers(`Carburant personnel total utilisé: ${stats.totalFuel.toFixed(1)} L`, 20, yPos);
+  yPos += 7;
+  writeWithBoldNumbers(`Kilomètres totaux parcourus: ${stats.totalKilometers.toFixed(1)} km`, 20, yPos);
+  yPos += 10;
+
+  if (includeChart) {
+    yPos += 10;
+    addChartToPdf(doc, yPos).then(newYPos => {
+      yPos = newYPos;
+
+      if (includeDetails) {
+        if (yPos > 270) {
+          doc.addPage();
+          yPos = 20;
+        }
+        
+        doc.text('Détail des activités:', 15, yPos);
+        yPos += 10;
+
+        periodActivities.sort((a, b) => new Date(a.date) - new Date(b.date))
+          .forEach(activity => {
+            const date = new Date(activity.date);
+            
+            if (yPos > 270) {
+              doc.addPage();
+              yPos = 20;
+            }
+
+            doc.setFont(undefined, 'bold');
+            const mainLine = `Date: ${formatDate(date)} - Activité: ${activityLabels[activity.type]} - Durée: ${formatHoursAndMinutes(activity.hours)}`;
+            doc.text(mainLine, 20, yPos);
+            doc.setFont(undefined, 'normal');
+            
+            if (activity.carburant || activity.kilometers || activity.description) {
+              yPos += 7;
+              if (yPos > 270) {
+                doc.addPage();
+                yPos = 20;
+              }
+              
+              let details = [];
+              if (activity.carburant) details.push(`Carburant: ${activity.carburant}L`);
+              if (activity.kilometers) details.push(`Kilomètres: ${activity.kilometers}km`);
+              
+              if (details.length > 0) {
+                doc.text(`    ${details.join(' - ')}`, 20, yPos);
+                yPos += 7;
+              }
+              
+              if (activity.description) {
+                if (yPos > 270) {
+                  doc.addPage();
+                  yPos = 20;
+                }
+                
+                const maxWidth = 170;
+                const wrappedLines = getWrappedLines(activity.description, doc, maxWidth);
+                
+                doc.text('    Description:', 20, yPos);
+                wrappedLines.forEach(line => {
+                  yPos += 7;
+                  if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                  }
+                  doc.text(`        ${line}`, 20, yPos);
+                });
+              }
+            }
+            
+            yPos += 10;
+          });
+      }
+
+      const fileName = `activites_${formatDate(startDate)}_${formatDate(endDate)}.pdf`;
+      doc.save(fileName);
+    });
+  } else {
+    if (includeDetails) {
+      periodActivities.sort((a, b) => new Date(a.date) - new Date(b.date))
+        .forEach(activity => {
+          const date = new Date(activity.date);
+          
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+
+          doc.setFont(undefined, 'bold');
+          const mainLine = `Date: ${formatDate(date)} - Activité: ${activityLabels[activity.type]} - Durée: ${formatHoursAndMinutes(activity.hours)}`;
+          doc.text(mainLine, 20, yPos);
+          doc.setFont(undefined, 'normal');
+          
+          if (activity.carburant || activity.kilometers || activity.description) {
+            yPos += 7;
+            if (yPos > 270) {
+              doc.addPage();
+              yPos = 20;
+            }
+            
+            let additionalDetails = [];
+            if (activity.carburant) additionalDetails.push(`Carburant: ${activity.carburant}L`);
+            if (activity.kilometers) additionalDetails.push(`Kilomètres: ${activity.kilometers}km`);
+            if (activity.description) additionalDetails.push(`Description: ${activity.description}`);
+            
+            doc.text(`    ${additionalDetails.join(' - ')}`, 20, yPos);
+          }
+          
+          yPos += 10;
+        });
+    }
+
+    const fileName = `activites_${formatDate(startDate)}_${formatDate(endDate)}.pdf`;
+    doc.save(fileName);
+  }
+}
+
+function calculatePeriodStats(activities) {
+  const stats = {
+    totalHours: 0,
+    totalFuel: 0,
+    totalKilometers: 0,
+    byType: {
+      tonte: 0,
+      desherbage: 0,
+      entretien: 0,
+      deplacement: 0,
+      travaux: 0,
+      autre: 0
+    }
+  };
+
+  activities.forEach(activity => {
+    stats.totalHours += activity.hours;
+    stats.byType[activity.type] += activity.hours;
+    stats.totalFuel += activity.carburant || 0;
+    stats.totalKilometers += activity.kilometers || 0;
+  });
+  
+  return stats;
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('fr-FR');
+}
+
+document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const submitButton = document.querySelector('#scheduleForm button[type="submit"]');
+  const editId = submitButton.dataset.editId;
+  
+  const scheduledActivity = {
+    id: editId ? parseInt(editId) : Date.now(),
+    type: document.getElementById('scheduleActivity').value,
+    description: document.getElementById('scheduleDescription').value
+  };
+
+  if (editId) {
+    const index = scheduledActivities.findIndex(a => a.id === parseInt(editId));
+    if (index !== -1) {
+      scheduledActivities[index] = scheduledActivity;
+    }
+    submitButton.textContent = 'Planifier l\'activité';
+    delete submitButton.dataset.editId;
+  } else {
+    scheduledActivities.push(scheduledActivity);
+  }
+
+  localStorage.setItem('scheduledActivities', JSON.stringify(scheduledActivities));
+  updateScheduledActivities();
+  this.reset();
+});
+
+function updateScheduledActivities() {
+  const container = document.getElementById('scheduledActivities');
+  while(container.children.length > 1) {
+    container.removeChild(container.lastChild);
+  }
+
+  scheduledActivities.forEach(activity => {
+    const card = document.createElement('div');
+    card.className = 'scheduled-card';
+    card.innerHTML = `
+      <div class="activity-actions">
+        <button class="edit-btn" data-id="${activity.id}">Modifier</button>
+        <button class="delete-btn" data-id="${activity.id}">Supprimer</button>
+      </div>
+      <strong>Activité:</strong> ${activityLabels[activity.type]}<br>
+      ${activity.description ? `<strong>Description:</strong> ${activity.description}` : ''}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function editScheduledActivity(id) {
+  const activity = scheduledActivities.find(a => a.id === id);
+  if (!activity) return;
+  
+  document.getElementById('scheduleActivity').value = activity.type;
+  document.getElementById('scheduleDescription').value = activity.description;
+  
+  const submitButton = document.querySelector('#scheduleForm button[type="submit"]');
+  submitButton.textContent = 'Modifier l\'activité';
+  submitButton.dataset.editId = id;
+}
+
+document.getElementById('scheduledActivities').addEventListener('click', function(e) {
+  if (e.target.classList.contains('delete-btn')) {
+    const id = parseInt(e.target.dataset.id);
+    if (confirm('Voulez-vous supprimer cette activité planifiée ?')) {
+      scheduledActivities = scheduledActivities.filter(a => a.id !== id);
+      localStorage.setItem('scheduledActivities', JSON.stringify(scheduledActivities));
+      updateScheduledActivities();
+    }
+  } else if (e.target.classList.contains('edit-btn')) {
+    const id = parseInt(e.target.dataset.id);
+    editScheduledActivity(id);
+  }
+});
+
+// Initialize scheduled activities on load
+document.addEventListener('DOMContentLoaded', function() {
+  initializeYearSelector();
+  updateDisplay();
+  updateScheduledActivities();
+});
+</script>
+</body></html>
